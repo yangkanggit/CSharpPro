@@ -1,0 +1,65 @@
+1.view得到Control中的数据
+①ViewBag
+以属性的方式
+②ViewData
+以字典的方式
+③TempData
+字典的方式，全局的，一次性的
+④Model的方式
+
+2.Controller中获得View中的信息
+1.post 表单 Required.QueryString[""];
+2.get           Requied.Form[""];
+
+验证
+使用using System.ComponentModel.DataAnnotations;
+增加验证特性
+Required, StringLength,Range，DataType等
+
+        [Required(ErrorMessage ="邮箱不能为Null")]
+        [EmailAddress]
+        [StringLength(20,MinimumLength =5)]
+        public string Email { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [MinLength(3)]
+        public string Psw { get; set; }
+
+ @Html.ValidationSummary（）
+输出所有验证错误, 一般放在Form头处。
+使用ModelState.AddModelError添加显示信息
+ModelState.AddModelError("", "Email or Psw is Error!");
+@Html.ValidationMessageFor()
+是针对单个输入的验证.
+
+MVC Html.AntiForgeryToken() 防止CSRF攻击
+
+在服务器端
+  public ActionResult SetPub()
+        {
+            return View();
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ShowPub()
+        {
+            ViewBag.Notice = Request.Form["Notice"].ToString();
+            return View();
+        }
+客户端
+
+
+@{
+    ViewBag.Title = "SetPub";
+}
+
+<h2>SetPub</h2>
+
+@using (Html.BeginForm("ShowPub","PubSet",FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @:网站公告:<input type="text" name="Notice" id="Notice" />
+    <input type="submit" value="Submit" />
+}
