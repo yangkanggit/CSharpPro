@@ -1,0 +1,246 @@
+委托可以是一个类
+在声明委托时，内部实际上申明了一个类
+所以在任何可以声明类的地方都可以声明委托
+eg:
+public delegate void GreetingDelegate(string name);
+=>
+public sealed class GreetingDelegate:System.MulticastDelegate{
+    public GreetingDelegate(object @object, IntPtr method);
+    public virtual IAsyncResult BeginInvoke(string name, AsyncCallback callback, object @object);
+    public virtual void EndInvoke(IAsyncResult result);
+    public virtual void Invoke(string name);
+}
+
+
+实例化委托时
+① =new(method)/+=new(method)
+② = method/+=method 直接赋值的方式
+
+一般都会这样用
+    public delegate void DelGreeting(string name);
+    class GreetingManager
+    {
+
+        public DelGreeting dg;
+
+      ////写一个方法将方便调用委托，不用每次都调用dg
+        public void GreetPeople(string name)
+        {
+           //DoMyThings
+
+            if(dg!=null)
+            {
+                dg(name);
+            }
+            else
+            {
+                throw new Exception("Error");
+            }
+        }
+    }
+
+这样，就可以在执行自己的方法时，同时执行已经注册到委托的方法(按钮触发的原理)
+
+
+
+Event对委托进行了封装
+使得在类的内部，无论声明其是pub还是protected，其实际上在内部申明了一个private的委托类型
+委托有两个方法一个+=，一个-=，将当前的变量添加到委托链表中
+private GreetingDelegate MakeGreet; //对事件的声明 实际是 声明一个私有的委托变量
+ 
+[MethodImpl(MethodImplOptions.Synchronized)]
+public void add_MakeGreet(GreetingDelegate value){
+    this.MakeGreet = (GreetingDelegate) Delegate.Combine(this.MakeGreet, value);
+}
+
+[MethodImpl(MethodImplOptions.Synchronized)]
+public void remove_MakeGreet(GreetingDelegate value){
+    this.MakeGreet = (GreetingDelegate) Delegate.Remove(this.MakeGreet, value);
+}
+
+
+Observe设计模式主要包括两个对象
+1.Subject 监视对象，包含其他对象感兴趣的内容
+2.Observer 监视者
+Observer设计模式是为了定义对象间的一种一对多的依赖关系，以便于当一个对象的状态改变时，
+其他依赖于它的对象会被自动告知并更新。Observer模式是一种松耦合的设计模式。
+
+.Net中的委托
+
+1  .Net Framework中委托事件的编码规范：
+
+委托类型的名称都应该以EventHandler结束。
+委托的原型定义：有一个void返回值，并接受两个输入参数：一个Object 类型，一个 EventArgs类型(或继承自EventArgs)。
+事件的命名为 委托去掉 EventHandler之后剩余的部分。
+继承自EventArgs的类型应该以EventArgs结尾。
+
+   class Heater
+    {
+        public readonly string Name = "FireHeater";
+        private int tempareture;
+        private string style = "1001T";
+        public delegate void BoiledEventHandler(object sender,BoiledEventArgs e);
+        public event BoiledEventHandler Boiled;
+       
+        
+        public void BoilWater()
+        {
+            for(int i=25;i<=100;i++)
+            {
+                tempareture = i;  
+            }
+            OnBoiled(new BoiledEventArgs(tempareture, style));  
+        }
+        protected virtual void OnBoiled(BoiledEventArgs e)
+        {
+            Boiled?.Invoke(this, e);
+           
+        }
+        
+        public class BoiledEventArgs:EventArgs
+        {
+            public int Tempareture { get; }
+            public string Style { get; }
+            public BoiledEventArgs(int tem,string sty)
+            {
+                Tempareture = tem;
+                Style = sty;
+            }
+        }
+    }
+
+class Alarm
+    {
+        public string Name { get;}
+        public Alarm(string name)
+        {
+            Name= name;
+        }
+        public void MakeAlert(object sender,Heater.BoiledEventArgs e)
+        {
+            Heater heater = (Heater)sender;
+            Console.WriteLine($"Alarm:嘀嘀嘀，我是{Name},,水已经{e.Tempareture}度了！" +
+                $"使用的是{heater.Name}牌烧水器，型号是{e.Style}");
+        }
+    }
+    class Display
+    {
+        public void ShowDis(object sender,Heater.BoiledEventArgs e)
+        {
+            Heater heater = (Heater)sender;
+            Console.WriteLine($"Display:水烧开了,水已经{e.Tempareture}度了！" +
+                $"使用的是{heater.Name}牌烧水器，型号是{e.Style}");
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Heater h1 = new Heater();
+            Alarm a1 = new Alarm("a1");
+            Display dis = new Display();
+            h1.Boiled += new Heater.BoiledEventHandler(new Alarm("AAA").MakeAlert);
+            h1.Boiled += a1.MakeAlert;
+            h1.Boiled += (new Alarm("a2")).MakeAlert;
+            h1.Boiled += dis.ShowDis;
+            h1.BoilWater();
+            Console.ReadLine();
+        }
+    }
+
+关于事件
+当我们单独谈论事件，我们说发布者(publisher)、订阅者(subscriber)、客户端(client)。
+当我们讨论Observer模式，我们说主题(subject)和观察者(observer)。
+客户端通常是包含Main()方法的Program类。
+
+事件的时在事件发布者其本身的某个行为触发，而不是直接调用委托变量
+通过添加event会使事件发布者的封装新更好，事件仅仅用于供其他类型定阅，而不能在客户端触发
+
+将事件公开，可以让多个客户端定阅，
+只允许一个客户订阅时，将事件声明为private,并提供两个方法进行注册和注销
+
+public class Publishser {
+    private event GeneralEventHandler NumberChanged;    // 声明一个私有事件
+    // 注册事件
+    public void Register(GeneralEventHandler method) {
+        NumberChanged = method;
+    }
+    // 取消注册
+    public void UnRegister(GeneralEventHandler method) {
+        NumberChanged -= method;
+    }
+
+    public void DoSomething() {
+        // 做某些其余的事情
+        if (NumberChanged != null) {    // 触发事件
+            string rtn = NumberChanged();
+            Console.WriteLine("Return: {0}", rtn);      // 打印返回的字符串，输出为Subscriber3
+        }
+    }
+}
+
+C#中提供了一种叫事件访问器（Event Accessor）的东西，它用来封装委托变量。
+
+// 定义委托
+public delegate string GeneralEventHandler();
+
+// 定义事件发布者
+public class Publishser {
+    // 声明一个委托变量
+    private GeneralEventHandler numberChanged;
+    // 事件访问器的定义
+    public event GeneralEventHandler NumberChanged {
+        add {
+            numberChanged = value;
+        }
+        remove {
+            numberChanged -= value;
+        }
+    }
+   
+    public void DoSomething() {
+        // 做某些其他的事情
+        if (numberChanged != null) {    // 通过委托变量触发事件
+            string rtn = numberChanged();
+            Console.WriteLine("Return: {0}", rtn);      // 打印返回的字符串
+        }
+    }
+}
+
+得到每一个定阅者的返回值
+
+dynamicInvoke 谨慎使用，其无法捕捉由所调用方法产生的异常
+ if (Boiled != null)
+            {
+                Delegate[] dels = Boiled.GetInvocationList();
+                foreach (var del in dels)
+                {
+                    try
+                    {
+                        //((BoiledEventHandler)del)(this, e);          //可以捕捉到异常
+                        del.DynamicInvoke(this, e);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+
+            }
+
+public void ThrowEx(object sender, EventArgs e)
+        {
+         //此异常会直接时程序崩溃
+            throw new Exception("throw exception, Error!");
+        }
+
+
+订阅者方法超时，定阅者方法占用大量事件时，将影响其他调用者和客户端
+可以使用beginInvoke(),使用其他线程池执行定阅者的方法
+注意
+1.在委托类型上调用beginInvoke时，此委托对象只能包含一个目标方法，对于多个
+订阅者调用，使用GetInvovationList（）获得所有委托对象，分别调用BeginInvoke
+2.订阅者的方法抛出异常，.Net会捕捉，但是只有在调用EndInvoke（）时才会抛出，
+客户端甚至不知道订阅者抛出了异常
+
