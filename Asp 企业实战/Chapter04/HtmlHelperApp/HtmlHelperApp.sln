@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlHelperApp", "HtmlHelperApp\HtmlHelperApp.csproj", "{099CC478-CE33-44DF-98F9-AB14311BE525}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlHelperApp.Tests", "HtmlHelperApp.Tests\HtmlHelperApp.Tests.csproj", "{2C7D0220-E36E-4FF2-B05D-28C2B7C196F4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{099CC478-CE33-44DF-98F9-AB14311BE525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{099CC478-CE33-44DF-98F9-AB14311BE525}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{099CC478-CE33-44DF-98F9-AB14311BE525}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{099CC478-CE33-44DF-98F9-AB14311BE525}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C7D0220-E36E-4FF2-B05D-28C2B7C196F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C7D0220-E36E-4FF2-B05D-28C2B7C196F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C7D0220-E36E-4FF2-B05D-28C2B7C196F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C7D0220-E36E-4FF2-B05D-28C2B7C196F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

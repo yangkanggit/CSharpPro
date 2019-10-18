@@ -1,0 +1,12 @@
+﻿@{
+    Layout = "~/Views/Shared/SiteLayout.cshtml";
+    ViewBag.Title = "我是子页面";
+}
+<h2>今天天气不错</h2>
+ @section Footer{
+           <b>@@ 超级牛逼公司所有</b>
+     }
+<div id="divTest">
+     @{Html.RenderAction("PartialViewTest");}
+</div>
+<div>@{Response.Write(this.GetType().Assembly.Location);}</div>
