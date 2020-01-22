@@ -1,0 +1,11 @@
+﻿@model MvcViewApp.Models.User
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>百晓生兵器谱排名</h2>
+<p>第一名：@ViewData["One"]</p>
+<p>第二名：@ViewBag.Two</p>
+<p>第三名：@Model.Name</p>
+<p>第四名：@TempData["Four"] </p>
+

@@ -1,0 +1,9 @@
+﻿@model MvcControllerApp.Models.Customers
+@{
+    ViewBag.Title = "Index";
+}
+
+<div>@ViewBag.UserName </div>
+<div>@ViewData["UserName"] </div>
+<div>@TempData["UserName"] </div>
+<div>@Model.ContactName</div>

@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+@{
+    string schoolName="湖南第一师范";
+}
+@helper List(List<string> dogs){
+    <ul>
+        @foreach (string s in dogs)
+        {
+            <li>@s</li>
+        }
+    </ul>
+    }
+@List(new List<string>(){"ruiky","lisa","lucy"})
+<script>
+    alert('@Ajax.JavaScriptStringEncode("小李飞刀")');
+</script>
+
+@*<span>@schoolName.Models</span> 错误*@
+<span>@(schoolName).Models</span>
+<span>zouqiongjun@uuch.net</span>@*通过，因为@前面没有空格*@
+@*<span>zouqiongjun @uuch.net</span>不通过，因为@前面有空格*@
+<div>@Html.Raw("<b>zouyujie</b>")</div>
+@if(1==1){
+     <text>我要输出文本在这里！</text>
+     @:我要输出文本在这里！
+    }

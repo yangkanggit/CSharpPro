@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "OutputTest";
+}
+@{
+    HtmlString htm = new HtmlString("<p>哈哈</p>");
+    @htm
+}
+@{
+    var strHtml = MvcHtmlString.Create("<p>哈哈~</p>");
+    @strHtml
+}
+@{
+    @Html.Raw("<p>哇哈哈哈~</p>");
+}
+@{
+    @ViewData["Text"]
+}
+

@@ -1,0 +1,34 @@
+﻿@model HtmlHelperApp.Models.User
+@{
+    ViewBag.Title = "Index";
+}
+
+<a href="/Home/Index">网站首页</a><br />
+@Html.ActionLink("网站首页","Index", "Home")
+@using (Html.BeginForm("Add", "home", FormMethod.Post, new { id="form1" }))
+{ 
+
+}
+@Html.Label("UserName")
+//相当于下面代码
+@{
+    Response.Write(Html.Label("UserName"));
+}
+@Html.Label("UserName")
+@Html.EditorFor(a=> a.Remark)
+
+@Html.CheckBox("Role") 
+@Html.RadioButton("Sex","male",true)男<br />
+@Html.RadioButton("Sex","female",false)女
+@Html.Hidden("Id")
+@Html.Password("pwd")
+
+@Html.RadioButton("favColor", "Blue", true)Blue <br />
+@Html.RadioButton("favColor", "Purple", false) Purple <br />
+@Html.RadioButton("favColor", "Red", false) Red <br />
+@Html.RadioButton("favColor2", "Orange", false) Orange <br />
+@Html.RadioButton("favColor2", "Yellow", false) Yellow <br />
+@Html.RadioButton("favColor2", "Brown", false) Brown <br />
+@Html.RadioButton("favColor2", "Green", false) Green
+
+@Html.Raw(Html.UserShow())
